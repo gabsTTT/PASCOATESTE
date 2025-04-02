@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autoatendimento - Ovos de Páscoa</title>
+    <style>
+        #resumo {
+            border: 2px solid #a000;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #f9f9f9;
+            max-width: 300px;
+            border-radius: 10px;
+        }
+        .pedido-item {
+            background-color: #fff;
+            margin: 5px 0;
+            padding: 8px;
+            border-radius: 5px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+    <script>
+        let pedido = [];
+        let precos = {
+            "Simples": { "100g": 18, "250g": 22, "500g": 32 },
+            "Trufado": { "100g": 30, "250g": 45, "500g": 70 },
+            "De Colher": { "250g": 50, "500g": 75 }
+        };
+        
+        function adicionarPedido() {
+            let tipo = document.querySelector('input[name="tipo"]:checked');
+            let tamanho = document.querySelector('input[name="tamanho"]:checked');
+            let sabor = document.querySelector('input[name="sabor"]:checked');
+            
+            if (!tipo || !tamanho || !sabor) {
+                alert("Selecione todas as opções antes de adicionar ao pedido.");
+                return;
+            }
+            
+            let preco = precos[tipo.value][tamanho.value];
+            pedido.push({ tipo: tipo.value, tamanho: tamanho.value, sabor: sabor.value, preco: preco });
+            atualizarResumo();
+        }
+        
+        function atualizarResumo() {
+            let resumo = document.getElementById("resumo");
+            resumo.innerHTML = pedido.map(item => `<div class='pedido-item'>${item.tipo} ${item.tamanho} - ${item.sabor} <strong>R$${item.preco},00</strong></div>`).join("");
+        }
+        
+        function enviarPedido() {
+            if (pedido.length === 0) {
+                alert("Adicione pelo menos um item ao pedido.");
+                return;
+            }
+            
+            let mensagem = "📌 *Meu Pedido de Ovos de Páscoa:*\n\n";
+            let total = 0;
+            pedido.forEach(item => {
+                mensagem += `🍫 *${item.tipo}* - ${item.tamanho} - ${item.sabor} - *R$${item.preco},00*\n`;
+                total += item.preco;
+            });
+            mensagem += `\n💰 *Total: R$${total},00*`;
+            
+            let telefone = "7591043561";
+            window.open(`https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`, "_blank");
+        }
+    </script>
+</head>
+<body>
+    <h2>Escolha seu Ovo de Páscoa</h2>
+    
+    <h3>Tipo:</h3>
+    <label><input type="radio" name="tipo" value="Simples"> Simples</label>
+    <label><input type="radio" name="tipo" value="Trufado"> Trufado</label>
+    <label><input type="radio" name="tipo" value="De Colher"> De Colher</label>
+    
+    <h3>Tamanho:</h3>
+    <label><input type="radio" name="tamanho" value="100g"> 100g (R$18,00 / R$30,00)</label>
+    <label><input type="radio" name="tamanho" value="250g"> 250g (R$22,00 / R$45,00 / R$50,00)</label>
+    <label><input type="radio" name="tamanho" value="500g"> 500g (R$32,00 / R$70,00 / R$75,00)</label>
+    
+    <h3>Sabor:</h3>
+    <label><input type="radio" name="sabor" value="Côco"> Côco</label>
+    <label><input type="radio" name="sabor" value="Chocolate"> Chocolate</label>
+    <label><input type="radio" name="sabor" value="Ninho"> Ninho</label>
+    <label><input type="radio" name="sabor" value="Morango"> Morango</label>
+    <label><input type="radio" name="sabor" value="Amendoim"> Amendoim</label>
+    <label><input type="radio" name="sabor" value="Maracujá"> Maracujá</label>
+    <label><input type="radio" name="sabor" value="Ameixa"> Ameixa</label>
+    
+    <br><br>
+    <button onclick="adicionarPedido()">Adicionar ao Pedido</button>
+    <h3>Resumo do Pedido:</h3>
+    <div id="resumo"></div>
+    
+    <button onclick="enviarPedido()">Enviar Pedido pelo WhatsApp</button>
+</body>
+</html>
