@@ -55,7 +55,7 @@
             let sabor = document.querySelector('input[name="sabor"]:checked');
             let nome = document.getElementById("nomeCliente").value.trim();
             
-            if (!tipo || !tamanho || !sabor) {
+            if (!tipo || !tamanho || (!sabor && tipo.value !== "Simples")) {
                 alert("Selecione todas as opções antes de adicionar ao pedido.");
                 return;
             }
@@ -66,7 +66,7 @@
             }
             
             let preco = precos[tipo.value][tamanho.value];
-            pedido.push({ tipo: tipo.value, tamanho: tamanho.value, sabor: sabor.value, preco: preco, nome: nome });
+            pedido.push({ tipo: tipo.value, tamanho: tamanho.value, sabor: sabor ? sabor.value : "Sem sabor", preco: preco, nome: nome });
             atualizarResumo();
         }
         
@@ -103,19 +103,35 @@
             let telefone = "7591043561";
             window.open(`https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`, "_blank");
         }
+        
+        function atualizarSabores() {
+            let tipo = document.querySelector('input[name="tipo"]:checked');
+            let sabores = document.querySelectorAll('input[name="sabor"]');
+            
+            if (tipo && tipo.value === "Simples") {
+                sabores.forEach(sabor => {
+                    sabor.checked = false;
+                    sabor.disabled = true;
+                });
+            } else {
+                sabores.forEach(sabor => {
+                    sabor.disabled = false;
+                });
+            }
+        }
     </script>
 </head>
 <body>
-    <img src="Sem título.jpg" alt="D'Leite - Feliz Páscoa">
+    <img src="https://drive.google.com/uc?export=view&id=1QkWDD1cW9ZhxozZUx0SZ2qF-KqSik35C" alt="D'Leite - Feliz Páscoa">
     <h2>Escolha seu Ovo de Páscoa</h2>
     
     <h3>Nome para o Pedido:</h3>
     <input type="text" id="nomeCliente" placeholder="Digite seu nome">
     
     <h3>Tipo:</h3>
-    <label><input type="radio" name="tipo" value="Simples"> Simples</label>
-    <label><input type="radio" name="tipo" value="Trufado"> Trufado</label>
-    <label><input type="radio" name="tipo" value="De Colher"> De Colher</label>
+    <label><input type="radio" name="tipo" value="Simples" onclick="atualizarSabores()"> Simples</label>
+    <label><input type="radio" name="tipo" value="Trufado" onclick="atualizarSabores()"> Trufado</label>
+    <label><input type="radio" name="tipo" value="De Colher" onclick="atualizarSabores()"> De Colher</label>
     
     <h3>Tamanho:</h3>
     <label><input type="radio" name="tamanho" value="100g"> 100g</label>
@@ -137,12 +153,5 @@
     <div id="resumo"></div>
     
     <button onclick="enviarPedido()">Enviar Pedido pelo WhatsApp</button>
-
-    <h3>Tabela de Preços:</h3>
-    <div>
-        <p><strong>Simples:</strong> 100g - R$18,00 | 250g - R$22,00 | 500g - R$32,00</p>
-        <p><strong>Trufado:</strong> 100g - R$30,00 | 250g - R$45,00 | 500g - R$70,00</p>
-        <p><strong>De Colher:</strong> 250g - R$50,00 | 500g - R$75,00</p>
-    </div>
 </body>
 </html>
