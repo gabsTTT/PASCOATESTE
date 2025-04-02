@@ -8,18 +8,21 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
+            background-color: #f7f3e9;
+            color: #5a3e1b;
         }
         #resumo {
-            border: 2px solid #000;
+            border: 2px solid #d4a373;
             padding: 10px;
             margin-top: 10px;
-            background-color: #f9f9f9;
+            background-color: #fff;
             max-width: 300px;
             border-radius: 10px;
             display: inline-block;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
         }
         .pedido-item {
-            background-color: #fff;
+            background-color: #f7e6d3;
             margin: 5px 0;
             padding: 8px;
             border-radius: 5px;
@@ -40,6 +43,31 @@
             width: 200px;
             margin-bottom: 20px;
         }
+        button {
+            background-color: #d4a373;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 80%;
+            max-width: 500px;
+            background-color: #fff;
+            border: 1px solid #d4a373;
+        }
+        th, td {
+            border: 1px solid #d4a373;
+            padding: 10px;
+        }
+        th {
+            background-color: #d4a373;
+            color: white;
+        }
     </style>
     <script>
         let pedido = [];
@@ -55,18 +83,13 @@
             let sabor = document.querySelector('input[name="sabor"]:checked');
             let nome = document.getElementById("nomeCliente").value.trim();
             
-            if (!tipo || !tamanho || (!sabor && tipo.value !== "Simples")) {
+            if (!tipo || !tamanho || (tipo.value !== "Simples" && !sabor)) {
                 alert("Selecione todas as opções antes de adicionar ao pedido.");
                 return;
             }
             
-            if (tipo.value === "De Colher" && tamanho.value === "100g") {
-                alert("Ovo de Colher 100g não está disponível.");
-                return;
-            }
-            
             let preco = precos[tipo.value][tamanho.value];
-            pedido.push({ tipo: tipo.value, tamanho: tamanho.value, sabor: sabor ? sabor.value : "Sem sabor", preco: preco, nome: nome });
+            pedido.push({ tipo: tipo.value, tamanho: tamanho.value, sabor: tipo.value === "Simples" ? "Sem sabor" : sabor.value, preco: preco, nome: nome });
             atualizarResumo();
         }
         
@@ -81,64 +104,32 @@
             pedido.splice(index, 1);
             atualizarResumo();
         }
-        
-        function enviarPedido() {
-            if (pedido.length === 0) {
-                alert("Adicione pelo menos um item ao pedido.");
-                return;
-            }
-            
-            let mensagem = "📌 *Meu Pedido de Ovos de Páscoa:*\n\n";
-            let total = 0;
-            let nomeCliente = document.getElementById("nomeCliente").value.trim();
-            if (nomeCliente) {
-                mensagem += `👤 *Nome:* ${nomeCliente}\n\n`;
-            }
-            pedido.forEach(item => {
-                mensagem += `🍫 *${item.tipo}* - ${item.tamanho} - ${item.sabor} - *R$${item.preco},00*\n`;
-                total += item.preco;
-            });
-            mensagem += `\n💰 *Total: R$${total},00*`;
-            
-            let telefone = "7591043561";
-            window.open(`https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`, "_blank");
-        }
-        
-        function atualizarSabores() {
-            let tipo = document.querySelector('input[name="tipo"]:checked');
-            let sabores = document.querySelectorAll('input[name="sabor"]');
-            
-            if (tipo && tipo.value === "Simples") {
-                sabores.forEach(sabor => {
-                    sabor.checked = false;
-                    sabor.disabled = true;
-                });
-            } else {
-                sabores.forEach(sabor => {
-                    sabor.disabled = false;
-                });
-            }
-        }
     </script>
 </head>
 <body>
     <img src="https://drive.google.com/uc?export=view&id=1QkWDD1cW9ZhxozZUx0SZ2qF-KqSik35C" alt="D'Leite - Feliz Páscoa">
     <h2>Escolha seu Ovo de Páscoa</h2>
+    <table>
+        <tr><th>Tipo</th><th>100g</th><th>250g</th><th>500g</th></tr>
+        <tr><td>Simples</td><td>R$18</td><td>R$22</td><td>R$32</td></tr>
+        <tr><td>Trufado</td><td>R$30</td><td>R$45</td><td>R$70</td></tr>
+        <tr><td>De Colher</td><td>-</td><td>R$50</td><td>R$75</td></tr>
+    </table>
     
     <h3>Nome para o Pedido:</h3>
     <input type="text" id="nomeCliente" placeholder="Digite seu nome">
     
     <h3>Tipo:</h3>
-    <label><input type="radio" name="tipo" value="Simples" onclick="atualizarSabores()"> Simples</label>
-    <label><input type="radio" name="tipo" value="Trufado" onclick="atualizarSabores()"> Trufado</label>
-    <label><input type="radio" name="tipo" value="De Colher" onclick="atualizarSabores()"> De Colher</label>
+    <label><input type="radio" name="tipo" value="Simples"> Simples</label>
+    <label><input type="radio" name="tipo" value="Trufado"> Trufado</label>
+    <label><input type="radio" name="tipo" value="De Colher"> De Colher</label>
     
     <h3>Tamanho:</h3>
     <label><input type="radio" name="tamanho" value="100g"> 100g</label>
     <label><input type="radio" name="tamanho" value="250g"> 250g</label>
     <label><input type="radio" name="tamanho" value="500g"> 500g</label>
     
-    <h3>Sabor:</h3>
+    <h3>Sabor (exceto para ovos Simples):</h3>
     <label><input type="radio" name="sabor" value="Côco"> Côco</label>
     <label><input type="radio" name="sabor" value="Chocolate"> Chocolate</label>
     <label><input type="radio" name="sabor" value="Ninho"> Ninho</label>
@@ -147,11 +138,9 @@
     <label><input type="radio" name="sabor" value="Maracujá"> Maracujá</label>
     <label><input type="radio" name="sabor" value="Ameixa"> Ameixa</label>
     
-    <br><br>
     <button onclick="adicionarPedido()">Adicionar ao Pedido</button>
     <h3>Resumo do Pedido:</h3>
     <div id="resumo"></div>
-    
     <button onclick="enviarPedido()">Enviar Pedido pelo WhatsApp</button>
 </body>
 </html>
